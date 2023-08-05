@@ -5,12 +5,49 @@
 
 namespace gxlib {
 
-// 饿汉单例模式
+// 懒汉单例模式，线程不安全
+class SingleInstance {
+public:
+  static SingleInstance *GetInstance() {
+    if (m_SingleInstance == nullptr) {
+      m_SingleInstance = new SingleInstance();
+    }
+    return m_SingleInstance;
+  }
+  static void deleteInstance() {
+    if (m_SingleInstance != nullptr) {
+      delete m_SingleInstance;
+      m_SingleInstance = nullptr;
+    }
+  }
+private:
+  SingleInstance();
+  ~SingleInstance();
+  SingleInstance(const SingleInstance &rhs);
+  const SingleInstance &operator=(const SingleInstance &rhs);
+private:
+  static SingleInstance *m_SingleInstance;
+};
+
+// 懒汉单例，不加锁线程安全
+class SingleInstance {
+public:
+  static SingleInstance *GetInstance() {
+    static SingleInstance single;
+    return &single;
+  }
+private:
+  SingleInstance();
+  ~SingleInstance();
+  SingleInstance(const SingleInstance &rhs);
+  const SingleInstance &operator=(const SingleInstance &rhs);
+};
+
+// 饿汉单例模式, 加锁线程安全
 class EagerSingleInstance {
 public:
   static EagerSingleInstance* GetInstance() {
-    static EagerSingleInstance ins;
-    return &ins;
+    return single_instance_;
   }
   ~EagerSingleInstance();
 private:
@@ -19,7 +56,11 @@ private:
   EagerSingleInstance& operator=(const EagerSingleInstance& rhs) {
     return *this;
   }
+private:
+  static EagerSingleInstance *single_instance_;
 };
+// 代码一运行就立刻初始化
+EagerSingleInstance* EagerSingleInstance::single_instance_ = new (std::nothrow)EagerSingleInstance();
 
 // 懒汉单例模式
 class LazySingleInstance {
