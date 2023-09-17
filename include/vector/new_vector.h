@@ -17,7 +17,9 @@ public:
   // 带有参数的构造函数
   new_vector(size_type n, const T& val = T()) : elements_(nullptr), first_free_(nullptr), cap_(nullptr) {
     reserve(n); // 分配空间，然后插入初始化元素
-  
+    for (size_type i = 0; i < n; ++ i) {
+      push_back(val);
+    }
   }
   new_vector(const new_vector& v) : elements_(nullptr), first_free_(nullptr), cap_(nullptr) {
     // 重新分配空间
@@ -131,7 +133,7 @@ public:
 private:
   void check_n_alloc() {
     if (size() == capacity()) {
-      
+      reallocate();
     }
   }
   void reallocate() {

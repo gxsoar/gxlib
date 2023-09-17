@@ -82,7 +82,7 @@ public:
     }
   }
 
-  // 采用赋值操作
+  // 采用赋值操作, 在这里面经过了一次拷贝，引用计数已经加一
   shared_ptr& operator=(shared_ptr rhs) {
     rhs.swap(*this);
     return *this;
